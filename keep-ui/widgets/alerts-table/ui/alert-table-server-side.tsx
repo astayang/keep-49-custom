@@ -46,6 +46,7 @@ import {
 } from "@/shared/ui";
 import { useUser } from "@/entities/users/model/useUser";
 import { UserStatefulAvatar } from "@/entities/users/ui";
+import { useHydratedSession } from "@/shared/lib/hooks/useHydratedSession";
 import { getStatusIcon, getStatusColor } from "@/shared/lib/status-utils";
 import { Icon } from "@tremor/react";
 import {
