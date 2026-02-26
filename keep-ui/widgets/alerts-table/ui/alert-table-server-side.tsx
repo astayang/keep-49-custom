@@ -533,6 +533,8 @@ export function AlertTableServerSide({
   );
 
   function renderTable() {
+    const { data: session } = useHydratedSession();
+    const isAdmin = session?.userRole === "admin";
     if (
       !showSkeleton &&
       table.getPageCount() === 0 &&
@@ -554,6 +556,8 @@ export function AlertTableServerSide({
                     icon={GrTest}
                     variant="secondary"
                     onClick={handleModalOpen}
+                    disabled={!isAdmin}
+                    tooltip={!isAdmin ? "Admins only" : undefined}
                   >
                     Simulate Alert
                   </Button>
@@ -564,6 +568,8 @@ export function AlertTableServerSide({
                     onClick={() => {
                       router.push("/providers?labels=alert");
                     }}
+                    disabled={!isAdmin}
+                    tooltip={!isAdmin ? "Admins only" : undefined}
                   >
                     Connect Data Source
                   </Button>
