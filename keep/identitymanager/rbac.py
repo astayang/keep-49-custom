@@ -20,7 +20,7 @@ from fastapi import HTTPException
 
 class Roles(enum.Enum):
     ADMIN = "admin"
-    NOC = "noc"
+    SUPPORT = "support"
     WEBHOOK = "webhook"
     WORKFLOW_RUNNER = "workflowrunner"
     READONLY = "readonly"
@@ -53,10 +53,10 @@ class Role:
         return True
 
 
-# Noc has read permissions and it can assign itself to alert
-class Noc(Role):
+# Support role has read permissions and it can assign itself to alert
+class Support(Role):
     SCOPES = ["read:*", "execute:workflows"]
-    DESCRIPTION = "read permissions and assign itself to alert"
+    DESCRIPTION = "read permissions and assign itself to alert (support role)"
 
 
 # Admin has all permissions
@@ -88,8 +88,8 @@ class WorkflowRunner(Role):
 def get_role_by_role_name(role_name: str) -> list[str]:
     if role_name == Roles.ADMIN.value:
         return Admin
-    elif role_name == Roles.NOC.value:
-        return Noc
+    elif role_name == Roles.SUPPORT.value:
+        return Support
     elif role_name == Roles.WEBHOOK.value:
         return Webhook
     elif role_name == Roles.WORKFLOW_RUNNER.value:

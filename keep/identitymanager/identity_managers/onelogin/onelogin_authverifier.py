@@ -21,9 +21,11 @@ class OneLoginAuthVerifier(AuthVerifierBase):
         self.onelogin_client_id = config("ONELOGIN_CLIENT_ID")
         self.auto_create_user = config("ONELOGIN_AUTO_CREATE_USER", default=True)
 
+        # existing env var names retained for compatibility but underlying value
+        # is now "support" instead of "noc".
         self.role_mappings = {
             config("ONELOGIN_ADMIN_ROLE", default="keep_admin"): "admin",
-            config("ONELOGIN_NOC_ROLE", default="keep_noc"): "noc",
+            config("ONELOGIN_NOC_ROLE", default="keep_support"): "support",
             config("ONELOGIN_WEBHOOK_ROLE", default="keep_webhook"): "webhook",
         }
 
@@ -72,7 +74,7 @@ class OneLoginAuthVerifier(AuthVerifierBase):
             self.logger.debug(f"OneLogin Groups: {onelogin_groups}")
 
             # Define the priority order of roles
-            role_priority = ["admin", "noc", "webhook"]
+            role_priority = ["admin", "support", "webhook"]
             mapped_role = None
 
             self.logger.debug(f"OneLogin to Keep Role Mapping: {self.role_mappings}")

@@ -52,7 +52,7 @@ const UserDropdown = ({ session }: UserDropdownProps) => {
         as="ul"
       >
         <div className="px-1 py-1 ">
-          {userRole !== "noc" && userRole !== "readonly" && (
+          {userRole !== "support" && userRole !== "readonly" && (
             <li>
               <Menu.Item
                 as={Link}

@@ -83,8 +83,8 @@ export const middleware = auth(async (request) => {
     return NextResponse.redirect(new URL(redirectTo, request.url));
   }
 
-  // Role-based routing (NOC users)
-  if (role === "noc" && !pathname.startsWith("/alerts")) {
+  // Role-based routing (Support users)
+  if (role === "support" && !pathname.startsWith("/alerts")) {
     return NextResponse.redirect(new URL("/alerts/feed", request.url));
   }
 

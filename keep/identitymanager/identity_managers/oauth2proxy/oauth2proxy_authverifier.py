@@ -31,9 +31,11 @@ class Oauth2proxyAuthVerifier(AuthVerifierBase):
             "KEEP_OAUTH2_PROXY_AUTO_CREATE_USER", default=True
         )
         self.role_mappings = {}
+        # NOTE: KEEP_OAUTH2_PROXY_NOC_ROLES retains its name but the
+        # mapped role has been changed to "support".
         for env_var, target_role in [
             ("KEEP_OAUTH2_PROXY_ADMIN_ROLES", "admin"),
-            ("KEEP_OAUTH2_PROXY_NOC_ROLES", "noc"),
+            ("KEEP_OAUTH2_PROXY_NOC_ROLES", "support"),
             ("KEEP_OAUTH2_PROXY_WEBHOOK_ROLES", "webhook"),
         ]:
             roles_str = config(env_var, default="")
@@ -102,7 +104,7 @@ class Oauth2proxyAuthVerifier(AuthVerifierBase):
             roles = [role]
 
         # Define the priority order of roles
-        role_priority = ["admin", "noc", "webhook"]
+        role_priority = ["admin", "support", "webhook"]
 
         mapped_role = None
         for priority_role in role_priority:

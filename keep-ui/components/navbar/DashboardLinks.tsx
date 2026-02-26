@@ -21,7 +21,7 @@ import { DashboardLink } from "./DashboardLink";
 
 export const DashboardLinks = ({ session }: { session: import("next-auth").Session | null }) => {
   const { dashboards = [], isLoading, error, mutate } = useDashboards();
-  const isRestricted = session?.userRole === "noc" || session?.userRole === "readonly";
+  const isRestricted = session?.userRole === "support" || session?.userRole === "readonly";
   if (isRestricted) {
     return null;
   }

@@ -90,7 +90,9 @@ class KeycloakAuthVerifier(AuthVerifierBase):
         self.groups_claims_admin = config(
             "KEYCLOAK_GROUPS_CLAIM_ADMIN", default="admin"
         )
-        self.groups_claims_noc = config("KEYCLOAK_GROUPS_CLAIM_NOC", default="noc")
+        # the support group suffix (formerly "noc")
+        # environment variable kept for backwards compatibility
+        self.groups_claims_noc = config("KEYCLOAK_GROUPS_CLAIM_NOC", default="support")
         self.groups_claims_webhook = config(
             "KEYCLOAK_GROUPS_CLAIM_WEBHOOK", default="webhook"
         )
@@ -99,7 +101,7 @@ class KeycloakAuthVerifier(AuthVerifierBase):
         ).lower()
         self.keycloak_roles = {
             self.groups_claims_admin: Roles.ADMIN,
-            self.groups_claims_noc: Roles.NOC,
+            self.groups_claims_noc: Roles.SUPPORT,
             self.groups_claims_webhook: Roles.WEBHOOK,
         }
         if self.roles_from_groups:
@@ -157,7 +159,7 @@ class KeycloakAuthVerifier(AuthVerifierBase):
         if group_name.endswith(self.groups_claims_admin):
             return True
 
-        # noc
+        # support (was previously called noc)
         if group_name.endswith(self.groups_claims_noc):
             return True
 
@@ -301,7 +303,8 @@ class KeycloakAuthVerifier(AuthVerifierBase):
                 if self.groups_claims_admin in current_tenant_group:
                     role = "admin"
                 elif self.groups_claims_noc in current_tenant_group:
-                    role = "noc"
+                    # groups_claims_noc holds the support suffix now
+                    role = "support"
                 elif self.groups_claims_webhook in current_tenant_group:
                     role = "webhook"
                 else:

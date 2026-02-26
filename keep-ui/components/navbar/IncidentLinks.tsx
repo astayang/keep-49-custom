@@ -18,7 +18,7 @@ type IncidentsLinksProps = { session: Session | null };
 
 export const IncidentsLinks = ({ session }: IncidentsLinksProps) => {
   const isNOCRole =
-    session?.userRole === "noc" || session?.userRole === "readonly";
+    session?.userRole === "support" || session?.userRole === "readonly";
   const { data: incidents, mutate } = useIncidents(
     {
       candidate: false,

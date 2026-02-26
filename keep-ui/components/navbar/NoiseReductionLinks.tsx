@@ -50,7 +50,7 @@ const TogglableLink = ({ children, disabledConfigKey }: TogglableLinkProps) => {
 };
 
 export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
-  const isNOCRole = session?.userRole === "noc" || session?.userRole === "readonly";
+  const isNOCRole = session?.userRole === "support" || session?.userRole === "readonly";
   const isAdminRole = session?.userRole === "admin";
   const { topologyData } = useTopology();
   const { data: tenantConfig, isLoading } = useTenantConfiguration();
