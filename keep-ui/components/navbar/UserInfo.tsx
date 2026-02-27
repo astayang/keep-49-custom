@@ -11,9 +11,8 @@ import { useFloating } from "@floating-ui/react";
 import { Subtitle } from "@tremor/react";
 import UserAvatar from "./UserAvatar";
 import { useSignOut } from "@/shared/lib/hooks/useSignOut";
-import { FaSlack } from "react-icons/fa";
 import { ThemeControl } from "@/shared/ui";
-import { HiOutlineDocumentText } from "react-icons/hi2";
+
 
 const ONBOARDING_FLOW_ID = "flow_FHDz1hit";
 
@@ -92,32 +91,13 @@ export const UserInfo = ({ session }: UserInfoProps) => {
   return (
     <>
       <ul className="space-y-2 p-2">
-        {session?.userRole !== "readonly" && (
+        {session?.userRole === "admin" && (
           <li>
             <LinkWithIcon href="/providers" icon={VscDebugDisconnect}>
               <Subtitle className="text-xs">Providers</Subtitle>
             </LinkWithIcon>
           </li>
         )}
-        <li className="flex text-xs items-center gap-2">
-          <LinkWithIcon
-            icon={FaSlack}
-            href="https://slack.keephq.dev/"
-            className="w-auto pr-3.5"
-            target="_blank"
-          >
-            Slack
-          </LinkWithIcon>
-          <LinkWithIcon
-            icon={HiOutlineDocumentText}
-            iconClassName="w-4"
-            href={docsUrl}
-            className="w-auto px-3.5"
-            target="_blank"
-          >
-            Docs
-          </LinkWithIcon>
-        </li>
         <div className="flex items-center justify-between">
           {session && <UserDropdown session={session} />}
           <ThemeControl className="text-sm size-10 flex items-center justify-center font-medium rounded-lg focus:ring focus:ring-orange-300 hover:!bg-stone-200/50" />
