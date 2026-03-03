@@ -50,7 +50,8 @@ const TogglableLink = ({ children, disabledConfigKey }: TogglableLinkProps) => {
 };
 
 export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
-  const isNOCRole = session?.userRole === "support" || session?.userRole === "readonly";
+  const isReadOnlyRole = session?.userRole === "readonly";
+  const isSupportRole = session?.userRole === "support";
   const isAdminRole = session?.userRole === "admin";
   const { topologyData } = useTopology();
   const { data: tenantConfig, isLoading } = useTenantConfiguration();
@@ -65,11 +66,15 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
     HIDE_NAVBAR_AI_PLUGINS: "HIDE_NAVBAR_AI_PLUGINS",
   };
 
-  if (isNOCRole) {
+  if (isReadOnlyRole) {
     return null;
   }
 
-  if (!Object.values(noiseReductionKeys).some((key) => !tenantConfig?.[key])) {
+  const visibleNoiseReductionKeys = isSupportRole
+    ? [noiseReductionKeys.HIDE_NAVBAR_MAINTENANCE_WINDOW]
+    : Object.values(noiseReductionKeys);
+
+  if (!visibleNoiseReductionKeys.some((key) => !tenantConfig?.[key])) {
     return null;
   }
 
@@ -101,7 +106,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
       </Disclosure.Button>
 
       <Disclosure.Panel as="ul" className="space-y-0.5 p-1 pr-1">
-        {isAdminRole && (
+        {!isSupportRole && isAdminRole && (
           <TogglableLink
             disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_DEDUPLICATION}
           >
@@ -116,64 +121,72 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
             </li>
           </TogglableLink>
         )}
-        <TogglableLink
-          disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_CORRELATION}
-        >
-          <li>
-            <LinkWithIcon href="/rules" icon={Rules} testId="rules">
-              <Subtitle className="text-xs">Correlations</Subtitle>
-            </LinkWithIcon>
-          </li>
-        </TogglableLink>
-        <TogglableLink
-          disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_WORKFLOWS}
-        >
-          <li>
-            <LinkWithIcon href="/workflows" icon={Workflows} testId="workflows">
-              <Subtitle className="text-xs">Workflows</Subtitle>
-            </LinkWithIcon>
-          </li>
-        </TogglableLink>
+        {!isSupportRole && (
+          <>
+            <TogglableLink
+              disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_CORRELATION}
+            >
+              <li>
+                <LinkWithIcon href="/rules" icon={Rules} testId="rules">
+                  <Subtitle className="text-xs">Correlations</Subtitle>
+                </LinkWithIcon>
+              </li>
+            </TogglableLink>
+            <TogglableLink
+              disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_WORKFLOWS}
+            >
+              <li>
+                <LinkWithIcon
+                  href="/workflows"
+                  icon={Workflows}
+                  testId="workflows"
+                >
+                  <Subtitle className="text-xs">Workflows</Subtitle>
+                </LinkWithIcon>
+              </li>
+            </TogglableLink>
 
-        <TogglableLink
-          disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY}
-        >
-          <li>
-            <LinkWithIcon
-              href="/topology"
-              icon={TbTopologyRing}
-              isBeta={!topologyData || topologyData.length === 0}
-              count={
-                topologyData?.length === 0 ? undefined : topologyData?.length
-              }
-              testId="service-topology"
+            <TogglableLink
+              disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY}
             >
-              <Subtitle className="text-xs">Service Topology</Subtitle>
-            </LinkWithIcon>
-          </li>
-        </TogglableLink>
-        <TogglableLink
-          disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_MAPPING}
-        >
-          <li>
-            <LinkWithIcon href="/mapping" icon={Mapping} testId="mapping">
-              <Subtitle className="text-xs">Mapping</Subtitle>
-            </LinkWithIcon>
-          </li>
-        </TogglableLink>
-        <TogglableLink
-          disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_EXTRACTION}
-        >
-          <li>
-            <LinkWithIcon
-              href="/extraction"
-              icon={ExportIcon}
-              testId="extraction"
+              <li>
+                <LinkWithIcon
+                  href="/topology"
+                  icon={TbTopologyRing}
+                  isBeta={!topologyData || topologyData.length === 0}
+                  count={
+                    topologyData?.length === 0 ? undefined : topologyData?.length
+                  }
+                  testId="service-topology"
+                >
+                  <Subtitle className="text-xs">Service Topology</Subtitle>
+                </LinkWithIcon>
+              </li>
+            </TogglableLink>
+            <TogglableLink
+              disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_MAPPING}
             >
-              <Subtitle className="text-xs">Extraction</Subtitle>
-            </LinkWithIcon>
-          </li>
-        </TogglableLink>
+              <li>
+                <LinkWithIcon href="/mapping" icon={Mapping} testId="mapping">
+                  <Subtitle className="text-xs">Mapping</Subtitle>
+                </LinkWithIcon>
+              </li>
+            </TogglableLink>
+            <TogglableLink
+              disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_EXTRACTION}
+            >
+              <li>
+                <LinkWithIcon
+                  href="/extraction"
+                  icon={ExportIcon}
+                  testId="extraction"
+                >
+                  <Subtitle className="text-xs">Extraction</Subtitle>
+                </LinkWithIcon>
+              </li>
+            </TogglableLink>
+          </>
+        )}
         <TogglableLink
           disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_MAINTENANCE_WINDOW}
         >
@@ -187,13 +200,15 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
             </LinkWithIcon>
           </li>
         </TogglableLink>
-        <TogglableLink
-          disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_AI_PLUGINS}
-        >
-          <li>
-            <AILink></AILink>
-          </li>
-        </TogglableLink>
+        {!isSupportRole && (
+          <TogglableLink
+            disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_AI_PLUGINS}
+          >
+            <li>
+              <AILink></AILink>
+            </li>
+          </TogglableLink>
+        )}
       </Disclosure.Panel>
     </Disclosure>
   );

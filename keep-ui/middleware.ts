@@ -84,7 +84,11 @@ export const middleware = auth(async (request) => {
   }
 
   // Role-based routing (Support users)
-  if (role === "support" && !pathname.startsWith("/alerts")) {
+  if (
+    role === "support" &&
+    !pathname.startsWith("/alerts") &&
+    !pathname.startsWith("/maintenance")
+  ) {
     return NextResponse.redirect(new URL("/alerts/feed", request.url));
   }
 

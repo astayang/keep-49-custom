@@ -55,8 +55,8 @@ class Role:
 
 # Support role has read permissions and it can assign itself to alert
 class Support(Role):
-    SCOPES = ["read:*", "execute:workflows"]
-    DESCRIPTION = "read permissions and assign itself to alert (support role)"
+    SCOPES = ["read:*", "execute:workflows", "write:maintenance"]
+    DESCRIPTION = "read permissions, maintenance window management, and assign itself to alert (support role)"
 
 
 # Admin has all permissions
