@@ -144,7 +144,7 @@ export default function SignInForm({
 
       // Add a small delay before redirect to ensure state update
       await new Promise((resolve) => setTimeout(resolve, 100));
-      router.replace("/incidents");
+      router.replace("/alerts/feed");
 
       // Disable form interactions during redirect
       await revalidateAfterAuth();

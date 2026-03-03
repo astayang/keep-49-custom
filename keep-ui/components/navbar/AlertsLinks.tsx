@@ -59,15 +59,7 @@ export const AlertsLinks = ({ session }: AlertsLinksProps) => {
     setIsTagModalOpen(true);
   };
 
-  // Determine if we should show the feed link
-  const shouldShowFeed = (() => {
-    // For the initial render on the server, always show feed
-    if (!isMounted || (!staticPresets && !staticPresetsError)) {
-      return true;
-    }
-
-    return staticPresets?.some((preset) => preset.name === "feed");
-  })();
+  const shouldShowFeed = true;
 
   const { isLoading: isAsyncLoading, totalCount: feedAlertsTotalCount } =
     usePresetAlertsCount("", false);
