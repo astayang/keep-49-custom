@@ -14,8 +14,6 @@ import {
   Transition,
 } from "@headlessui/react";
 import {
-  GitHubLogoIcon,
-  FileTextIcon,
   TwitterLogoIcon,
 } from "@radix-ui/react-icons";
 import {
@@ -99,8 +97,6 @@ export const Search = ({ session }: SearchProps) => {
   const [, setSelectedOption] = useState<string | null>(null);
   const router = useRouter();
   const comboboxInputRef = useRef<ElementRef<"input">>(null);
-  const { data: configData } = useConfig();
-  const docsUrl = configData?.KEEP_DOCS_URL || "https://docs.keephq.dev";
   const [isLoading, setIsLoading] = useState(false);
 
   // Log session for debugging
@@ -109,18 +105,6 @@ export const Search = ({ session }: SearchProps) => {
   }, [session]);
 
   const EXTERNAL_OPTIONS = [
-    {
-      icon: FileTextIcon,
-      label: "Keep Docs",
-      shortcut: ["⇧", "D"],
-      navigate: docsUrl,
-    },
-    {
-      icon: GitHubLogoIcon,
-      label: "Keep Source code",
-      shortcut: ["⇧", "C"],
-      navigate: "https://github.com/keephq/keep",
-    },
     {
       icon: TwitterLogoIcon,
       label: "Keep Twitter",

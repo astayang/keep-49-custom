@@ -84,10 +84,6 @@ type UserInfoProps = {
 };
 
 export const UserInfo = ({ session }: UserInfoProps) => {
-  const { data: config } = useConfig();
-
-  const docsUrl = config?.KEEP_DOCS_URL || "https://docs.keephq.dev";
-
   return (
     <>
       <ul className="space-y-2 p-2">
