@@ -745,13 +745,22 @@ def get_random_workflow_templates(
         if os.path.exists(fallback_directory):
             default_directory = fallback_directory
         else:
-            logger.error(f"Neither {default_directory} nor {fallback_directory} exist")
-            raise FileNotFoundError(
-                f"Neither {default_directory} nor {fallback_directory} exist"
+            logger.warning(
+                f"Neither {default_directory} nor {fallback_directory} exist. Returning empty templates list."
             )
-    workflows = workflowstore.get_random_workflow_templates(
-        tenant_id=tenant_id, workflows_dir=default_directory, limit=8
-    )
+            return []
+
+    try:
+        workflows = workflowstore.get_random_workflow_templates(
+            tenant_id=tenant_id, workflows_dir=default_directory, limit=8
+        )
+    except FileNotFoundError as error:
+        logger.warning(
+            "Workflow templates are unavailable. Returning empty templates list.",
+            extra={"tenant_id": tenant_id, "error": str(error)},
+        )
+        workflows = []
+
     return workflows
 
 
@@ -777,13 +786,26 @@ def query_workflow_templates(
         if os.path.exists(fallback_directory):
             default_directory = fallback_directory
         else:
-            logger.error(f"Neither {default_directory} nor {fallback_directory} exist")
-            raise FileNotFoundError(
-                f"Neither {default_directory} nor {fallback_directory} exist"
+            logger.warning(
+                f"Neither {default_directory} nor {fallback_directory} exist. Returning empty templates list."
             )
-    workflows, total_count = workflowstore.query_workflow_templates(
-        tenant_id=tenant_id, workflows_dir=default_directory, query=query
-    )
+            return {
+                "limit": query.limit,
+                "offset": query.offset,
+                "count": 0,
+                "results": [],
+            }
+    try:
+        workflows, total_count = workflowstore.query_workflow_templates(
+            tenant_id=tenant_id, workflows_dir=default_directory, query=query
+        )
+    except FileNotFoundError as error:
+        logger.warning(
+            "Workflow templates are unavailable. Returning empty templates list.",
+            extra={"tenant_id": tenant_id, "error": str(error)},
+        )
+        workflows, total_count = [], 0
+
     return {
         "limit": query.limit,
         "offset": query.offset,
