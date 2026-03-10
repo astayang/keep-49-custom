@@ -50,16 +50,18 @@ const TogglableLink = ({ children, disabledConfigKey }: TogglableLinkProps) => {
 };
 
 export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
-  const isReadOnlyRole = session?.userRole === "readonly";
-  const isSupportRole = session?.userRole === "support";
-  const isAdminRole = session?.userRole === "admin";
+  const normalizedRole = (session?.userRole || "")
+    .toLowerCase()
+    .replace(/[-_\s]/g, "");
+  const isReadOnlyRole = normalizedRole === "readonly";
+  const isSupportRole = normalizedRole === "support";
+  const isAdminRole = normalizedRole === "admin";
   const { topologyData } = useTopology();
-  const { data: tenantConfig, isLoading } = useTenantConfiguration();
+  const { data: tenantConfig } = useTenantConfiguration();
   const noiseReductionKeys = {
     HIDE_NAVBAR_DEDUPLICATION: "HIDE_NAVBAR_DEDUPLICATION",
     HIDE_NAVBAR_CORRELATION: "HIDE_NAVBAR_CORRELATION",
     HIDE_NAVBAR_WORKFLOWS: "HIDE_NAVBAR_WORKFLOWS",
-    HIDE_NAVBAR_SERVICE_TOPOLOGY: "HIDE_NAVBAR_SERVICE_TOPOLOGY",
     HIDE_NAVBAR_MAPPING: "HIDE_NAVBAR_MAPPING",
     HIDE_NAVBAR_EXTRACTION: "HIDE_NAVBAR_EXTRACTION",
     HIDE_NAVBAR_MAINTENANCE_WINDOW: "HIDE_NAVBAR_MAINTENANCE_WINDOW",
@@ -70,22 +72,23 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
     ? Object.values(noiseReductionKeys)
     : isSupportRole
       ? [
-          noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY,
           noiseReductionKeys.HIDE_NAVBAR_MAINTENANCE_WINDOW,
         ]
       : isReadOnlyRole
-        ? [noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY]
+        ? []
         : [
             noiseReductionKeys.HIDE_NAVBAR_CORRELATION,
             noiseReductionKeys.HIDE_NAVBAR_WORKFLOWS,
-            noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY,
             noiseReductionKeys.HIDE_NAVBAR_MAPPING,
             noiseReductionKeys.HIDE_NAVBAR_EXTRACTION,
             noiseReductionKeys.HIDE_NAVBAR_MAINTENANCE_WINDOW,
             noiseReductionKeys.HIDE_NAVBAR_AI_PLUGINS,
           ];
 
-  if (!visibleNoiseReductionKeys.some((key) => !tenantConfig?.[key])) {
+  if (
+    !isReadOnlyRole &&
+    !visibleNoiseReductionKeys.some((key) => !tenantConfig?.[key])
+  ) {
     return null;
   }
 
@@ -94,7 +97,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
       <Disclosure.Button className="w-full flex justify-between items-center px-2">
         {({ open }) => (
           <>
-            {tenantConfig && (
+            {(tenantConfig || isReadOnlyRole) && (
               <>
                 <Subtitle className="text-xs ml-2 text-gray-900 font-medium uppercase">
                   EVENT MANAGEMENT
@@ -176,23 +179,19 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
             </TogglableLink>
           </>
         )}
-        <TogglableLink
-          disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY}
-        >
-          <li>
-            <LinkWithIcon
-              href="/topology"
-              icon={TbTopologyRing}
-              isBeta={!topologyData || topologyData.length === 0}
-              count={
-                topologyData?.length === 0 ? undefined : topologyData?.length
-              }
-              testId="service-topology"
-            >
-              <Subtitle className="text-xs">Service Topology</Subtitle>
-            </LinkWithIcon>
-          </li>
-        </TogglableLink>
+        <li>
+          <LinkWithIcon
+            href="/topology"
+            icon={TbTopologyRing}
+            isBeta={!topologyData || topologyData.length === 0}
+            count={
+              topologyData?.length === 0 ? undefined : topologyData?.length
+            }
+            testId="service-topology"
+          >
+            <Subtitle className="text-xs">Service Topology</Subtitle>
+          </LinkWithIcon>
+        </li>
         {!isReadOnlyRole && (
           <TogglableLink
             disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_MAINTENANCE_WINDOW}

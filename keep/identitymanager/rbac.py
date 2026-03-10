@@ -55,7 +55,7 @@ class Role:
 
 # Support role has read permissions and it can assign itself to alert
 class Support(Role):
-    SCOPES = ["read:*", "execute:workflows", "write:maintenance"]
+    SCOPES = ["read:*", "write:maintenance" ]
     DESCRIPTION = "read permissions, maintenance window management, and assign itself to alert (support role)"
 
 
@@ -69,8 +69,8 @@ class Readonly(Role):
     # NOTE: we deliberately omit `read:incident` so that even if a user
     # manually navigates they won't have permission. The frontend already
     # hides incident links for both NOC and readonly roles.
-    SCOPES = ["read:alert"]
-    DESCRIPTION = "view alerts only"
+    SCOPES = ["read:alert", "read:topology"]
+    DESCRIPTION = "view alerts and topology only"
 
 
 # Webhook has write:alert permission to write alerts
