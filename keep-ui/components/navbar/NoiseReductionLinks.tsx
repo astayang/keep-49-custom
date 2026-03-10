@@ -110,7 +110,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
                 />
               </>
             )}
-            {!tenantConfig && (
+            {!tenantConfig && !isReadOnlyRole && (
               <div className="flex items-center h-7 pl-2">
                 <Skeleton className="min-h-5 min-w-36" />
               </div>
@@ -135,7 +135,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
             </li>
           </TogglableLink>
         )}
-        {!isSupportRole && (
+        {!isSupportRole && !isReadOnlyRole && (
           <>
             <TogglableLink
               disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_CORRELATION}
@@ -207,7 +207,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
             </li>
           </TogglableLink>
         )}
-        {!isSupportRole && (
+        {!isSupportRole && !isReadOnlyRole && (
           <TogglableLink
             disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_AI_PLUGINS}
           >
