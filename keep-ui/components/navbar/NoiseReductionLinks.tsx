@@ -66,13 +66,24 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
     HIDE_NAVBAR_AI_PLUGINS: "HIDE_NAVBAR_AI_PLUGINS",
   };
 
-  if (isReadOnlyRole) {
-    return null;
-  }
-
-  const visibleNoiseReductionKeys = isSupportRole
-    ? [noiseReductionKeys.HIDE_NAVBAR_MAINTENANCE_WINDOW]
-    : Object.values(noiseReductionKeys);
+  const visibleNoiseReductionKeys = isAdminRole
+    ? Object.values(noiseReductionKeys)
+    : isSupportRole
+      ? [
+          noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY,
+          noiseReductionKeys.HIDE_NAVBAR_MAINTENANCE_WINDOW,
+        ]
+      : isReadOnlyRole
+        ? [noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY]
+        : [
+            noiseReductionKeys.HIDE_NAVBAR_CORRELATION,
+            noiseReductionKeys.HIDE_NAVBAR_WORKFLOWS,
+            noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY,
+            noiseReductionKeys.HIDE_NAVBAR_MAPPING,
+            noiseReductionKeys.HIDE_NAVBAR_EXTRACTION,
+            noiseReductionKeys.HIDE_NAVBAR_MAINTENANCE_WINDOW,
+            noiseReductionKeys.HIDE_NAVBAR_AI_PLUGINS,
+          ];
 
   if (!visibleNoiseReductionKeys.some((key) => !tenantConfig?.[key])) {
     return null;
@@ -86,7 +97,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
             {tenantConfig && (
               <>
                 <Subtitle className="text-xs ml-2 text-gray-900 font-medium uppercase">
-                  NOISE REDUCTION
+                  EVENT MANAGEMENT
                 </Subtitle>
                 <IoChevronUp
                   className={clsx(
@@ -136,30 +147,8 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
               disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_WORKFLOWS}
             >
               <li>
-                <LinkWithIcon
-                  href="/workflows"
-                  icon={Workflows}
-                  testId="workflows"
-                >
+                <LinkWithIcon href="/workflows" icon={Workflows} testId="workflows">
                   <Subtitle className="text-xs">Workflows</Subtitle>
-                </LinkWithIcon>
-              </li>
-            </TogglableLink>
-
-            <TogglableLink
-              disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY}
-            >
-              <li>
-                <LinkWithIcon
-                  href="/topology"
-                  icon={TbTopologyRing}
-                  isBeta={!topologyData || topologyData.length === 0}
-                  count={
-                    topologyData?.length === 0 ? undefined : topologyData?.length
-                  }
-                  testId="service-topology"
-                >
-                  <Subtitle className="text-xs">Service Topology</Subtitle>
                 </LinkWithIcon>
               </li>
             </TogglableLink>
@@ -188,18 +177,37 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
           </>
         )}
         <TogglableLink
-          disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_MAINTENANCE_WINDOW}
+          disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_SERVICE_TOPOLOGY}
         >
           <li>
             <LinkWithIcon
-              href="/maintenance"
-              icon={FaVolumeMute}
-              testId="maintenance"
+              href="/topology"
+              icon={TbTopologyRing}
+              isBeta={!topologyData || topologyData.length === 0}
+              count={
+                topologyData?.length === 0 ? undefined : topologyData?.length
+              }
+              testId="service-topology"
             >
-              <Subtitle className="text-xs">Maintenance Windows</Subtitle>
+              <Subtitle className="text-xs">Service Topology</Subtitle>
             </LinkWithIcon>
           </li>
         </TogglableLink>
+        {!isReadOnlyRole && (
+          <TogglableLink
+            disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_MAINTENANCE_WINDOW}
+          >
+            <li>
+              <LinkWithIcon
+                href="/maintenance"
+                icon={FaVolumeMute}
+                testId="maintenance"
+              >
+                <Subtitle className="text-xs">Maintenance Windows</Subtitle>
+              </LinkWithIcon>
+            </li>
+          </TogglableLink>
+        )}
         {!isSupportRole && (
           <TogglableLink
             disabledConfigKey={noiseReductionKeys.HIDE_NAVBAR_AI_PLUGINS}
