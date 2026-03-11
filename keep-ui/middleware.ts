@@ -55,15 +55,8 @@ export const middleware = auth(async (request) => {
     !pathname.startsWith("/error") &&
     !pathname.startsWith("/api/healthcheck")
   ) {
-    let redirectTo = request.nextUrl.href || "/alerts/feed";
-    // always prefer alerts feed as landing page; don't propagate
-    // direct /incidents requests into callbackUrl
-    if (
-      redirectTo.startsWith("http") &&
-      new URL(redirectTo).pathname.startsWith("/incidents")
-    ) {
-      redirectTo = "/alerts/feed";
-    }
+    // Always redirect to alerts/feed after login for all roles
+    const redirectTo = "/alerts/feed";
 
     console.log(
       `Redirecting ${pathname} to signin page because user is not authenticated`
@@ -73,14 +66,12 @@ export const middleware = auth(async (request) => {
     );
   }
 
-  // If authenticated and on signin page, redirect to alerts feed
+  // If authenticated and on signin page, always redirect to alerts/feed
   if (isAuthenticated && pathname.startsWith("/signin")) {
-    const redirectTo =
-      request.nextUrl.searchParams.get("callbackUrl") || "/alerts/feed";
     console.log(
-      `Redirecting to ${redirectTo} because user try to get /signin but already authenticated`
+      `Redirecting to /alerts/feed because user try to get /signin but already authenticated`
     );
-    return NextResponse.redirect(new URL(redirectTo, request.url));
+    return NextResponse.redirect(new URL("/alerts/feed", request.url));
   }
 
   // Role-based routing (Support users)
